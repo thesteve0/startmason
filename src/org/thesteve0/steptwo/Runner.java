@@ -38,7 +38,7 @@ public class Runner extends SimState {
 
 
         for (int i = 0; i < numParticles; i++) {
-            p = new Animal();  // random direction
+            p = new Animal(this);  // random direction
 
             schedule.scheduleRepeating(p);
             /*

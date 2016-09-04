@@ -8,6 +8,7 @@ package org.thesteve0.steptwo;
 public class Move {
     private long deltaX = 0;
     private long deltaY = 0;
+    private double lastDirection = 0;
 
     public long getDeltaX() {
         return deltaX;
