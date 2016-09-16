@@ -39,21 +39,28 @@ public class Animal implements Steppable {
     //The SimState that runs the Simulation
     private Runner runner = null;
 
-    //The Last move for this animal - should only be null on first move
-    private Move lastMove = null;
+    //The the direction on the previous step
+    private double lastDirectionRadians = 0.0;
+
+    //Distance they can walk past the edge before being removed from the simulation
+    // Units is pixels
+    private int deathDistance = 25;
 
 
 
-    //8  will produce a very peaked circular distribution - smaller number make it flatter
     private VonMises vonMises = null;
 
     public Animal(Runner runner) {
-        this.lastMove = new Move();
         this.runner = runner;
-        vonMises = new VonMises(0.0000001, new ec.util.MersenneTwisterFast(runner.random.nextLong()));
+        //8  will produce a very peaked circular distribution - smaller number make it flatter
+        vonMises = new VonMises(1, runner.random);
+        // burn in the random distribution
         for (int i = 0; i < 1024; i++) {
             vonMises.nextDouble();
         }
+
+        //initialize a random direction
+        this.lastDirectionRadians = runner.random.nextDouble(true, true) * 360;
     }
 
 
@@ -76,15 +83,14 @@ public class Animal implements Steppable {
     private Move makeAMove() {
         Move move = new Move();
 
-        //Todo given how an angle of 0 means no movement in the Y direction I need to change this
-        //A result of 0 should really mean keep going in the same direction. I think this means pass in the
-        // last angle and then add the direction of the random distribution to the current angle
-
         //This result is in radians
-        double direction = vonMises.nextDouble();
+        double direction = this.lastDirectionRadians + vonMises.nextDouble();
+        this.lastDirectionRadians = direction;
+
 
 
         //A random distance between 0 and the parameter non-inclusive
+        //Todo we might want something other than a uniform distribution & distance is another paramter for the animal
         int dist = this.runner.random.nextInt(20);
 
 
@@ -123,24 +129,17 @@ public class Animal implements Steppable {
         int newx = new Long(location.x + moveResult.getDeltaX()).intValue();
         int newy = new Long(location.y + moveResult.getDeltaY()).intValue();
 
-        // TODO this is broken currently - I need to figure out to reflect properly
-        // I think part of the problem is how I do the move up above - this may really need some refactoring
-        // reverse course if hitting boundary
-        if (newx < 0) {
-            newx++;
-            xdir = -xdir;
-        } else if (newx >= runner.gridWidth) {
-            newx--;
-            xdir = -xdir;
+
+        // It is most biologically "realistic" to remove animals from the simulation that go too far
+        // outside the boundary
+        if ((newx > runner.gridWidth + deathDistance) || (newx < -1 * deathDistance)) {
+            runner.particles.remove(this);
         }
-        if (newy < 0) {
-            newy++;
-            ydir = -ydir;
-        } else if (newy >= runner.gridHeight) {
-            newy--;
-            ydir = -ydir;
+        if ((newy > runner.gridHeight + deathDistance) || (newy < -1 * deathDistance)) {
+            runner.particles.remove(this);
         }
 
+        System.out.println(this.name + " coords: " + newx + ": " + newy);
 
         // make my new location
         Int2D newloc = new Int2D(newx, newy);
@@ -164,5 +163,11 @@ public class Animal implements Steppable {
 
         //TODO output stats here
 
+
     }
+
+    public void setDeathDistance(int deathDistance) {
+        this.deathDistance = deathDistance;
+    }
+
 }
