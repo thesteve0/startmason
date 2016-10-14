@@ -25,4 +25,13 @@ public class Move {
     public void setDeltaY(long deltaY) {
         this.deltaY = deltaY;
     }
+
+
+    public double getLastDirection() {
+        return lastDirection;
+    }
+
+    public void setLastDirection(double lastDirection) {
+        this.lastDirection = lastDirection;
+    }
 }

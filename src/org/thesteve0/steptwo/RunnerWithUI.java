@@ -76,12 +76,12 @@ public class RunnerWithUI extends GUIState {
     public void setupPortrayals() {
         // tell the portrayals what to
         // portray and how to portray them
-        trailsPortrayal.setField(
-                ((Runner) state).locations);
-        trailsPortrayal.setMap(
-                new sim.util.gui.SimpleColorMap(
-                        0.0, 1.0, Color.black, Color.white));
-        particlesPortrayal.setField(((Runner) state).particles);
+        //trailsPortrayal.setField(
+        //        ((Runner) state).locations);
+        //trailsPortrayal.setMap(
+        //        new sim.util.gui.SimpleColorMap(
+        //                0.0, 1.0, Color.black, Color.white));
+        particlesPortrayal.setField(((Runner) state).animals);
         particlesPortrayal.setPortrayalForAll(new sim.portrayal.simple.OvalPortrayal2D(Color.green));
 
         // reschedule the displayer

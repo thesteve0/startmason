@@ -113,8 +113,8 @@ public class Animal implements Steppable {
         Move moveResult = makeAMove();
 
         // We could just store my location internally, but for purposes of
-        // show, let's get my position out of the particles grid
-        Int2D location = runner.particles.getObjectLocation(this);
+        // show, let's get my position out of the animals grid
+        Int2D location = runner.animals.getObjectLocation(this);
 
         /*// Randomize my direction if requested
         if (randomize)
@@ -133,10 +133,10 @@ public class Animal implements Steppable {
         // It is most biologically "realistic" to remove animals from the simulation that go too far
         // outside the boundary
         if ((newx > runner.gridWidth + deathDistance) || (newx < -1 * deathDistance)) {
-            runner.particles.remove(this);
+            runner.animals.remove(this);
         }
         if ((newy > runner.gridHeight + deathDistance) || (newy < -1 * deathDistance)) {
-            runner.particles.remove(this);
+            runner.animals.remove(this);
         }
 
         System.out.println(this.name + " coords: " + newx + ": " + newy);
@@ -146,11 +146,11 @@ public class Animal implements Steppable {
         //Rather than doing this below in that loop - give a first movers advantage.
         //If there is someone already in the spot then go ahead and recalculate a new position
 
-        runner.particles.setObjectLocation(this, newloc);
+        runner.animals.setObjectLocation(this, newloc);
 
         // TODO this is animal Dependent so I need to make it optional - mtn lions won't share a cell but tiger salamanders will
         // randomize everyone at that location if need be
-        Bag p = runner.particles.getObjectsAtLocation(newloc);
+        Bag p = runner.animals.getObjectsAtLocation(newloc);
         if (p.numObjs > 1) {
             for (int x = 0; x < p.numObjs; x++)
 
